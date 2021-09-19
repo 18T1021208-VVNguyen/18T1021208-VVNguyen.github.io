@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+         <title>Game Tic Tac Toe</title>
+        <style>
+            *{margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;line-height:1.42857143;color:#333;overflow:hidden}.app{width:1200px;margin:0 auto}.header_img{width:100px;padding-right:10px}.header_content{display:flex;justify-content:center;margin:10px 0;padding:30px;color:#000}.header_title{font-weight:900}.control{display:flex;justify-content:center;margin-bottom:25px}.control button{font-size:15px;margin:0 20px;padding:10px;cursor:pointer}.chessboard{display:flex;justify-content:center;margin-bottom:25px}.square{width:90px;height:90px;cursor:pointer;text-align:center;color:#000;font-size:60px;font-weight:200;line-height:90px;border:solid 1px #000}.outer_square :hover{background-color:#cb7216e0}.score{display:flex;justify-content:center}.score_column{width:90px;height:60px;text-align:center;font-size:15px;border:solid 1px #000}.end_game{width:100%;height:550px;background-color:rgba(158,157,157,.514);position:relative;left:0;top:-526px}.end_game_box{text-align:center;width:276px;background-color:#000;padding:20px;position:absolute;top:141px;right:72px}.end_game_box_h2{color:#fff;font-size:30px}.end_game_box_button{margin-top:10px;font-size:20px;cursor:pointer;padding:10px;width:80px}.new_game_box{width:276px;height:278px;background-color:#000;position:absolute;top:98px;left:462px;text-align:center}.new_game_box_h2{color:#fff;font-size:30px;margin-top:65px;pointer-events:none}.new_game_box_button{margin-top:44px;width:80px;font-size:20px;cursor:pointer;padding:10px}.button_easy{margin-right:20px}.button_hard{margin-left:20px}.contact{position:absolute;bottom:5px;right:0;color:red;}
+        </style>
+
+    </head>
+    <body onLoad="Loaded()">
+        <div class="app">
+            <header class="header">
+                <div class="header_content">
+                    <img class="header_img" src="https://i.pinimg.com/originals/17/95/bd/1795bdc04081e37a6447db30352de031.jpg">
+                    <h1 class="header_title">Game Tic-Tac-Toe Áp Dụng Trí Tuệ Nhân Tạo</h1>
+                </div>
+            
+            </header>
+            <div class="control" >
+                <button onClick="DisplayMode()"> New Game</button>
+            </div>
+
+            <div class="chessboard">
+                            <!-- Bàn Cờ-->
+            </div>
+           
+            <div class="score">
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <th class="score_column">
+                            Player<br>(O)
+                        </th>
+                        <th class="score_column"">
+                            Tie
+                        </th>
+                        <th class="score_column ">
+                            Computer <p class="computer"></p>(X)
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="score_column score_player">
+                            0
+                        </td >
+                        <td class="score_column score_tie">
+                            0
+                        </td >
+                        <td class="score_column score_computer">
+                            0
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="end_game" style="display: block;">
+                <div class="end_game_box" style="display: none;">
+                    <h2 class="end_game_box_h2">TEST GAME</h2>
+                    <button class="end_game_box_button" onClick="NextGame()">OK</button>
+                </div>
+                <div class="new_game_box" style="display: block;">
+                     <h2 class="new_game_box_h2">CHỌN MỨC ĐỘ</h2>
+                     <button class="new_game_box_button button_easy" id="1" onclick="SelectMode(id)">Dễ</button>
+                     <button class="new_game_box_button button_hard" id="5" onclick="SelectMode(id)">Khó</button>
+                    
+                </div>
+                <div class="contact">
+                    <p class="contact_p">contact: <a class="contact_a" href="https://www.facebook.com/vovannguyen.2k">18T1021208-VVNguyen</a></p>
+                </div>
+            </div>
+                                                        
+        </div>
+    </body>
+    <script >
+        const sizeH=3;const sizeC=3;const countmax=3;var winvalue=10;var CPlayer=0;var Total=0;var Computer_Score=0;var Player_Score=0;var Tie_SCore=0;var reset=!1;var deep=0;function Loaded(){var table='<table border="0" cellspacing="0" cellpadding="0">';for(var i=0;i<sizeH;i++){table+='<tr>';for(var j=0;j<sizeC;j++){var c=i*sizeC+j;table+='<td class="outer_square"> <div id="'+c+'" class="square" onClick="Click(id)" player="-1" > </div> </td>'}
+table+='</tr>'}
+table+='</table>';var board=document.querySelector(".chessboard");board.innerHTML=table}
+function Click(id){var NodePlay=document.getElementById(id);var player=NodePlay.getAttribute("player");if(player!=-1)return;NodePlay.setAttribute("player",CPlayer);NodePlay.innerText='O';var board=GetBoard(id);if(CheckNodeEnd(board)){DisplayWinLose(board);return}
+CPlayer=1;var min=12;var ID_AI=-1;for(i=0;i<sizeH*sizeC;i++){var child=Move(board,i);if(child==null)
+continue;var tmp=MiniMax(child,deep,!0);if(tmp<min){min=tmp;ID_AI=i}}
+if(ID_AI===-1)return;var NodePlayAI=document.getElementById(ID_AI);var playerAI=NodePlayAI.getAttribute("player");if(playerAI!=-1)return;NodePlayAI.setAttribute("player",CPlayer);NodePlayAI.innerText='X';var boardAI=GetBoard(ID_AI);if(CheckNodeEnd(boardAI)){DisplayWinLose(boardAI);return}
+CPlayer=0}
+function WinGame(board){if(WinNgang(board)==winvalue||winDoc(board)==winvalue||winCheoTrai(board)==winvalue||WinCheoPhai(board)==winvalue)
+return!0;return!1}
+function GetBoard(id){var TBoard=[];var sql=document.getElementsByClassName("square");for(i=0;i<sizeH*sizeC;i++)
+TBoard.push(sql[i].getAttribute("player"));TBoard.push(!0);TBoard.push(id);return TBoard}
+function GetX(id){var num=parseInt(id)+1;if(num%sizeC==0)
+return Math.floor(num/sizeC)-1;else return Math.floor(num/sizeC)}
+function GetY(id){var h=GetX(id);return parseInt(id)-h*sizeC}
+function WinNgang(board){var id=board[sizeC*sizeH+1];var right=GetY(id);var left=right-1;var X=GetX(id);var count=0;while(left>=0){if(board[X*sizeC+left]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;left--}
+while(right<sizeC){if(board[X*sizeC+right]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;right++}
+return BoardSocre(count)}
+function winDoc(board){var id=board[sizeH*sizeC+1];var Y=GetY(id);var up=GetX(id);var down=up+1;var count=0;while(up>=0){if(board[up*sizeC+Y]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;up--}
+while(down<sizeH){if(board[down*sizeC+Y]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;down++}
+return BoardSocre(count)}
+function winCheoTrai(board){var id=board[sizeC*sizeH+1];var Up_Left_X=GetX(id);var Up_Left_Y=GetY(id);var Down_Left_X=Up_Left_X+1;var Down_Left_Y=Up_Left_Y+1;var count=0;while(Up_Left_X>=0&&Up_Left_Y>=0){if(board[Up_Left_X*sizeC+Up_Left_Y]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;Up_Left_X--;Up_Left_Y--}
+while(Down_Left_X<sizeH&&Down_Left_Y<sizeC){if(board[Down_Left_X*sizeC+Down_Left_Y]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;Down_Left_X++;Down_Left_Y++}
+return BoardSocre(count)}
+function WinCheoPhai(board){var id=board[sizeH*sizeC+1];var Up_Right_X=GetX(id);var Up_Right_Y=GetY(id);var Down_Right_X=Up_Right_X+1;var Down_Right_Y=Up_Right_Y-1;var count=0;while(Up_Right_X>=0&&Up_Right_Y<sizeC){if(board[Up_Right_X*sizeC+Up_Right_Y]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;Up_Right_X --;Up_Right_Y ++}
+while(Down_Right_X<sizeH&&Down_Right_Y>=0){if(board[Down_Right_X*sizeC+Down_Right_Y]==board[parseInt(id)]&&board[parseInt(id)]!=-1)
+count++;else break;Down_Right_X++;Down_Right_Y--}
+return BoardSocre(count)}
+function BoardSocre(count){if(count>=countmax)
+return 10;return 0}
+function DisplayWinLose(board){var EndGame=document.querySelector(".end_game");var EndGameBoxH2=document.querySelector(".end_game_box_h2");var bangthangthua=document.querySelector(".end_game_box");var bangchedo=document.querySelector(".new_game_box");EndGame.style.display='block';bangthangthua.style.display="block";bangchedo.style.display="none";if(WinGame(board)==!0){if(CPlayer==0){EndGameBoxH2.innerText="BẠN ĐÃ THẮNG";Player_Score++}else{EndGameBoxH2.innerText="BẠN ĐÃ THUA";Computer_Score++}}else{EndGameBoxH2.innerText="HÒA";Tie_SCore++}}
+function NextGame(){Total++;CPlayer=0;if(reset==!0){Total=0;Computer_Score=0;Player_Score=0;Tie_SCore=0;reset=!1}
+for(var i=0;i<sizeC*sizeH;i++){var NodePlay=document.getElementById(i);NodePlay.setAttribute("player","-1");NodePlay.innerText=''}
+if(Total%2!=0){var IdRanDom=Math.floor(Math.random()*(sizeC*sizeH));var NoDe=document.getElementById(IdRanDom);NoDe.setAttribute("player","1");NoDe.innerText='X'}
+if(deep==1)
+document.querySelector(".computer").innerText="Easy";else document.querySelector(".computer").innerText="Hard";var CP_Score=document.querySelector(".score_computer");var PL_Score=document.querySelector(".score_player");var Tie_Score=document.querySelector(".score_tie");CP_Score.innerText=Computer_Score;PL_Score.innerText=Player_Score;Tie_Score.innerText=Tie_SCore;var EndGame=document.querySelector(".end_game");EndGame.style.display='none'}
+function DisplayMode(){var bangT=document.querySelector('.end_game');bangT.style.display="block";var bangthangthua=document.querySelector('.end_game_box');bangthangthua.style.display="none";var bangchedo=document.querySelector(".new_game_box");bangchedo.style.display="block"}
+function SelectMode(id){deep=id;var EndGame=document.querySelector(".end_game");EndGame.style.display='none';reset=!0;NextGame()}
+function CheckNodeEnd(board){var check=!0;if(WinGame(board))
+return!0;for(var i=0;i<sizeH*sizeC;i++){if(board[i]==-1){check=!1;break}}
+return check}
+function BoardValue(board){var r=Math.max(WinNgang(board),winDoc(board),winCheoTrai(board),WinCheoPhai(board));if(board[sizeC*sizeH]==!1)
+r=r*parseInt(-1);if(r==-0)return 0;return r}
+function Move(board,id){if(board[id]!=-1)return null;var bc=board.slice();var t=board[sizeH*sizeC];bc[sizeC*sizeH+1]=id;if(t==!0){bc[id]=1;bc[sizeC*sizeH]=!1}else{bc[id]=0;bc[sizeH*sizeC]=!0}
+return bc}
+function AlphaBeta(board,deep,a,b,mp){if(CheckNodeEnd(board)||deep<=0)
+return BoardValue(board);if(mp){for(var i=0;i<sizeC*sizeH;i++){var child=Move(board,i);if(child==null)continue;var tmp=AlphaBeta(child,deep-1,a,b,!1);a=Math.max(a,tmp);if(a>=b)break}
+return a}else{for(var i=0;i<sizeC*sizeH;i++){var child=Move(board,i);if(child==null)continue;var tmp=AlphaBeta(child,deep-1,a,b,!0);b=Math.min(b,tmp);if(a>=b)break}
+return b}}
+function MiniMax(board,deep,mp){return AlphaBeta(board,deep,-11,11,mp)}
+    </script>
+    
+
+</html>
